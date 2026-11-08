@@ -1,0 +1,32 @@
+name: Gather Thumbnail Assets
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  gather:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python deps
+        run: pip install pillow numpy
+      - name: Fetch photos from Wikimedia Commons
+        run: python tools/gather_thumb_assets.py
+      - name: Download PhotoCraft (headless CLI) and list its commands
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p pc && cd pc
+          gh release download -R storytold/photocraft --pattern '*linux-x86_64.tar.gz' || true
+          ls -la
+          tar xzf *.tar.gz 2>/dev/null || true
+          find . -maxdepth 3 -type f -perm -u+x | head -20
+          BIN=$(find . -type f -name 'photocraft-cli' | head -1); [ -z "$BIN" ] && BIN=$(find . -type f -name 'photocraft' | head -1)
+          echo "BIN=$BIN"
+          { echo "## BIN $BIN"; "$BIN" --help 2>&1 || "$BIN" --cli --help 2>&1; echo "## run --help"; "$BIN" run --help 2>&1 || "$BIN" --cli run --help 2>&1; echo "## commands"; "$BIN" commands --help 2>&1 || true; "$BIN" commands list 2>&1 | head -700 || true; } > ../thumb_assets/photocraft_help.txt 2>&1 || true
+      - name: Publish to release thumb-assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view thumb-assets >/dev/null 2>&1 || gh release create thumb-assets --title "thumb-assets" --notes "working files"
+          gh release upload thumb-assets thumb_assets/* --clobber
