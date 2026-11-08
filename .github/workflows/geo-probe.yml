@@ -15,5 +15,6 @@ jobs:
         run: |
           git config user.email "bot@example.com"; git config user.name "bot"
           git fetch origin scratch && git checkout scratch
-          mkdir -p geo && cp build_tmp/geo/names.tsv build_tmp/geo/probe.jpg build_tmp/geo/relief_small.jpg geo/
+          mkdir -p geo && cp build_tmp/geo/names.tsv build_tmp/geo/probe.jpg build_tmp/geo/relief_small.jpg build_tmp/geo/syr_ADM1.geojson build_tmp/geo/syr_ADM2.geojson build_tmp/geo/meta.json geo/
+          python -c "import numpy as np; e=np.load('build_tmp/geo/elev.npy'); np.savez_compressed('geo/elev.npz', e=e)"
           git add geo && git commit -qm "geo probe" && git push origin scratch
