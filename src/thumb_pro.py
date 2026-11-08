@@ -70,11 +70,6 @@ def build(pdir, out):
     cm[H - 1010:, :1500] = local
     full = np.zeros((H, W, 3), "float32"); full[H - 1010:, :1500] = ca
     base = layer_over(base, full, cm * 1.0)
-    # 4 ---- second crowd texture (Assi square) screened low for density
-    c2 = cover(P("07.jpg"), 1100, 520); c2a = tint(arr(c2), (1.1, 0.95, 0.8))
-    m2 = np.zeros((H, W), "float32"); m2[H - 520:, 0:1100] = grad_mask(1100, 520, lambda x, y: smooth(y / 0.5) * smooth((1 - x) / 0.35)) * 0.55
-    f2 = np.zeros((H, W, 3), "float32"); f2[H - 520:, 0:1100] = c2a
-    pass  # second crowd layer removed (messy seam)
     # 5 ---- hero flag (generated, waved), with shadow + backlight
     fl = flag(); fl = fl.rotate(9, expand=True, resample=Image.BICUBIC); fl = fl.resize((int(fl.width * 0.60), int(fl.height * 0.60)), Image.LANCZOS)
     sh = Image.new("L", (W, H), 0); sh.paste(fl.split()[3].point(lambda v: int(v * 0.8)), (-60, 50))
