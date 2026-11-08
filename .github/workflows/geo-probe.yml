@@ -1,0 +1,19 @@
+name: Geo probe
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install pillow numpy shapely
+      - run: python tools/fetch_geo.py build_tmp/geo --probe
+      - name: Push probe to scratch branch
+        run: |
+          git config user.email "bot@example.com"; git config user.name "bot"
+          git fetch origin scratch && git checkout scratch
+          mkdir -p geo && cp build_tmp/geo/names.tsv build_tmp/geo/probe.jpg build_tmp/geo/relief_small.jpg geo/
+          git add geo && git commit -qm "geo probe" && git push origin scratch
