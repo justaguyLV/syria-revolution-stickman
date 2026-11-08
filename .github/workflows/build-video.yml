@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["src/**", "data/**", "assets/**", ".github/workflows/build-video.yml"]
+    paths: ["src/**", "data/**", "assets/**", "tools/**", ".github/workflows/build-video.yml"]
 
 permissions:
   contents: write
@@ -24,7 +24,23 @@ jobs:
       - name: Install ffmpeg + libraqm (Arabic text shaping)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg libraqm0 libfribidi0 libharfbuzz0b
+          sudo apt-get install -y ffmpeg libraqm0 libfribidi0 libharfbuzz0b libcairo2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Download stickman drawing engine (vallahrich/stickman-mcp, MIT)
+        run: |
+          git clone https://github.com/vallahrich/stickman-mcp.git engine
+          cd engine && git checkout ea1b1c35cce1bac273eb3cd12b55f670707c4de9
+          npm install --no-audit --no-fund
+          npm install --no-save --no-audit --no-fund @types/node
+          npx tsc -p tsconfig.json || true
+          test -f dist/index.js
+
+      - name: Draw stickman motion clips with the engine
+        run: node tools/make_clips.mjs engine build_tmp/clips
 
       - name: Install Python deps
         run: pip install -r requirements.txt

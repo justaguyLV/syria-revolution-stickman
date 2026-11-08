@@ -1,6 +1,7 @@
 """Stickman primitives + animated 'stage' scenes (left panel, 420x600 design px)."""
 import math
 from textutil import S, font, draw_text, text_w
+import actors as A
 
 INK = (30, 30, 36)
 RED = (192, 57, 43)
@@ -57,25 +58,31 @@ def person(d, x, gy, h, t, pose="stand", color=INK, sign=None, ph=0.0, flip=1, h
         arms = (10, -10)
     elif pose == "point":
         arms = (18, -85)
-    gy = gy - bob
-    hip = (x, gy - h * 0.42)
-    neck = (x, hip[1] - h * 0.30)
-    head = (x + (h * 0.02 * flip if pose == "sad" else 0), neck[1] - r * 0.95)
-    sh = (x, neck[1] + h * 0.04)
+    if A.available():
+        clip = A.POSE_TO_CLIP.get(pose, "idle")
+        A.paste(d._image, clip, t, x * S, gy * S, h * S * 0.88, color, head_fill, flip=flip, phase=ph * 0.37)
+        top_head = gy - h * 1.02
+        sh = (x, top_head + h * 0.2)
+    else:
+        gy = gy - bob
+        hip = (x, gy - h * 0.42)
+        neck = (x, hip[1] - h * 0.30)
+        head = (x + (h * 0.02 * flip if pose == "sad" else 0), neck[1] - r * 0.95)
+        sh = (x, neck[1] + h * 0.04)
 
-    def end(p, a, ln):
-        rad = math.radians(a)
-        return (p[0] + ln * math.sin(rad) * flip, p[1] + ln * math.cos(rad))
-    for a in legs:
-        L(d, [hip, end(hip, a, h * 0.43)], lw, color)
-    for a in arms:
-        L(d, [sh, end(sh, a, h * 0.30)], lw, color)
-    L(d, [neck, hip], lw, color)
-    C(d, head[0], head[1], r, fill=head_fill, outline=color, w=lw)
-    if pose == "sad":
-        L(d, [(head[0] - r * .4, head[1] + r * .35), (head[0] + r * .4, head[1] + r * .35)], 1.5, color)
+        def end(p, a, ln):
+            rad = math.radians(a)
+            return (p[0] + ln * math.sin(rad) * flip, p[1] + ln * math.cos(rad))
+        for a in legs:
+            L(d, [hip, end(hip, a, h * 0.43)], lw, color)
+        for a in arms:
+            L(d, [sh, end(sh, a, h * 0.30)], lw, color)
+        L(d, [neck, hip], lw, color)
+        C(d, head[0], head[1], r, fill=head_fill, outline=color, w=lw)
+        if pose == "sad":
+            L(d, [(head[0] - r * .4, head[1] + r * .35), (head[0] + r * .4, head[1] + r * .35)], 1.5, color)
     if sign:
-        top = sh[1] - h * 0.30
+        top = (gy - h * 1.05) if A.available() else sh[1] - h * 0.30
         bw, bh = h * 0.64, h * 0.30
         R(d, x - bw / 2, top - bh, x + bw / 2, top, fill=(255, 255, 255), outline=color, w=2.2, rad=3)
         T(d, (x, top - bh / 2), sign, max(11, h * 0.16), color)
