@@ -1,0 +1,30 @@
+name: PhotoCraft Probe
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe PhotoCraft CLI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p pc out && cd pc
+          gh release download -R storytold/photocraft --pattern '*linux-x86_64.tar.gz'
+          tar xzf *.tar.gz
+          { echo "## TREE"; find . -maxdepth 3 | head -40
+            B=$(find . -type f \( -name photocraft-cli -o -name photocraft \) -path '*bin*' | head -3); echo "## BINS $B"
+            CLI=$(echo "$B" | grep cli | head -1); [ -z "$CLI" ] && CLI=$(echo "$B" | head -1)
+            echo "## USING $CLI"; chmod +x $CLI
+            echo "## help"; $CLI --help 2>&1 | head -60
+            echo "## cli help"; $CLI --cli --help 2>&1 | head -60
+            echo "## run help"; $CLI run --help 2>&1 | head -60; $CLI --cli run --help 2>&1 | head -60
+            echo "## commands"; $CLI commands 2>&1 | head -30; $CLI --cli commands 2>&1 | head -30
+            echo "## ldd"; ldd $CLI 2>&1 | grep -i "not found" | head
+          } > ../out/probe.txt 2>&1 || true
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload thumb-assets out/probe.txt --clobber -R ${{ github.repository }}
