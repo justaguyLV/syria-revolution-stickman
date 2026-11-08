@@ -19,7 +19,10 @@ jobs:
           mkdir -p photos out
           gh release download thumb-assets -p '00.jpg' -p '01.jpg' -p 'meta.json' -D photos --clobber
       - name: Composite (layers, flag, light, type)
-        run: python src/thumb_pro.py photos out/base.png
+        run: |
+          python src/thumb_pro.py photos out/base.png > out/composite.log 2>&1 || { cat out/composite.log; gh release upload thumb-assets out/composite.log --clobber; exit 1; }
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Finish with PhotoCraft (headless)
         env:
           GH_TOKEN: ${{ github.token }}
