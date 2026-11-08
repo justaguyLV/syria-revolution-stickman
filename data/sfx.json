@@ -1,0 +1,637 @@
+{
+ "intro": [
+  {
+   "type": "murmur",
+   "f": 0,
+   "vol": 0.7
+  },
+  {
+   "type": "birds",
+   "f": 0.05,
+   "vol": 0.6
+  }
+ ],
+ "spark": [
+  {
+   "type": "murmur",
+   "f": 0,
+   "vol": 1.0
+  },
+  {
+   "type": "chant",
+   "f": 0.13,
+   "phrase": "peaceful",
+   "reps": 3,
+   "period": 2.2,
+   "text": "سلمية.. سلمية"
+  },
+  {
+   "type": "chant",
+   "f": 0.33,
+   "phrase": "wants",
+   "reps": 3,
+   "period": 2.3,
+   "text": "الشعب يريد إسقاط النظام"
+  },
+  {
+   "type": "chant",
+   "f": 0.58,
+   "phrase": "freedom",
+   "reps": 3,
+   "period": 2.0,
+   "text": "حرية.. حرية.. حرية"
+  },
+  {
+   "type": "chant",
+   "f": 0.8,
+   "phrase": "one",
+   "reps": 2,
+   "period": 3.0,
+   "text": "واحد واحد الشعب السوري واحد"
+  }
+ ],
+ "crackdown": [
+  {
+   "type": "tank",
+   "f": 0.03,
+   "dur": 15,
+   "vol": 0.8
+  },
+  {
+   "type": "shot",
+   "f": 0.14,
+   "n": 8,
+   "gap": 0.1,
+   "who": "s1",
+   "lon": 36.1,
+   "lat": 32.62
+  },
+  {
+   "type": "fall",
+   "f": 0.17,
+   "who": "p3"
+  },
+  {
+   "type": "shot",
+   "f": 0.2,
+   "n": 10,
+   "gap": 0.1,
+   "who": "s2"
+  },
+  {
+   "type": "shot",
+   "f": 0.27,
+   "n": 1,
+   "gap": 0.5,
+   "who": "tank"
+  },
+  {
+   "type": "blast",
+   "f": 0.275,
+   "size": 1.1,
+   "stage": [
+    120,
+    500
+   ],
+   "lon": 36.72,
+   "lat": 34.73
+  },
+  {
+   "type": "shot",
+   "f": 0.29,
+   "n": 6,
+   "gap": 0.09,
+   "who": "s1"
+  },
+  {
+   "type": "shot",
+   "f": 0.42,
+   "n": 10,
+   "gap": 0.11,
+   "dist": true,
+   "lon": 37.16,
+   "lat": 36.2
+  },
+  {
+   "type": "blast",
+   "f": 0.5,
+   "size": 1.0,
+   "dist": true,
+   "lon": 36.29,
+   "lat": 33.51
+  },
+  {
+   "type": "siren",
+   "f": 0.55,
+   "dur": 10,
+   "vol": 0.5
+  },
+  {
+   "type": "chant",
+   "f": 0.7,
+   "phrase": "wants",
+   "reps": 2,
+   "period": 2.4,
+   "text": "الشعب يريد إسقاط النظام"
+  }
+ ],
+ "fragment": [
+  {
+   "type": "drone",
+   "f": 0,
+   "vol": 0.5
+  },
+  {
+   "type": "shot",
+   "f": 0.1,
+   "n": 10,
+   "gap": 0.12,
+   "dist": true,
+   "lon": 37.16,
+   "lat": 36.2
+  },
+  {
+   "type": "shot",
+   "f": 0.25,
+   "n": 8,
+   "gap": 0.12,
+   "dist": true,
+   "lon": 39.01,
+   "lat": 35.95
+  },
+  {
+   "type": "jet",
+   "f": 0.33,
+   "dur": 6,
+   "vol": 0.5
+  },
+  {
+   "type": "blast",
+   "f": 0.4,
+   "size": 0.8,
+   "dist": true,
+   "lon": 36.29,
+   "lat": 33.51
+  },
+  {
+   "type": "shot",
+   "f": 0.55,
+   "n": 10,
+   "gap": 0.12,
+   "dist": true,
+   "lon": 40.14,
+   "lat": 35.33
+  },
+  {
+   "type": "blast",
+   "f": 0.7,
+   "size": 0.8,
+   "dist": true,
+   "lon": 36.63,
+   "lat": 35.93
+  }
+ ],
+ "chemical": [
+  {
+   "type": "drone",
+   "f": 0,
+   "vol": 0.9
+  },
+  {
+   "type": "wind",
+   "f": 0,
+   "vol": 0.7
+  },
+  {
+   "type": "siren",
+   "f": 0.1,
+   "dur": 10,
+   "vol": 0.6
+  },
+  {
+   "type": "whoosh",
+   "f": 0.2
+  },
+  {
+   "type": "blast",
+   "f": 0.26,
+   "size": 0.8,
+   "dist": true,
+   "lon": 36.37,
+   "lat": 33.52
+  }
+ ],
+ "isis": [
+  {
+   "type": "shot",
+   "f": 0.07,
+   "n": 10,
+   "gap": 0.1,
+   "who": "y1",
+   "lon": 38.3,
+   "lat": 36.91
+  },
+  {
+   "type": "shot",
+   "f": 0.13,
+   "n": 12,
+   "gap": 0.1,
+   "who": "y2"
+  },
+  {
+   "type": "shot",
+   "f": 0.19,
+   "n": 8,
+   "gap": 0.12,
+   "who": "d0",
+   "lon": 38.45,
+   "lat": 36.86
+  },
+  {
+   "type": "jet",
+   "f": 0.24,
+   "dur": 5,
+   "vol": 0.7
+  },
+  {
+   "type": "blast",
+   "f": 0.33,
+   "size": 1.3,
+   "stage": [
+    335,
+    500
+   ],
+   "lon": 38.41,
+   "lat": 36.89
+  },
+  {
+   "type": "shot",
+   "f": 0.4,
+   "n": 14,
+   "gap": 0.09,
+   "who": "y1"
+  },
+  {
+   "type": "shell",
+   "f": 0.5,
+   "lead": 1.0,
+   "size": 1.2,
+   "stage": [
+    372,
+    500
+   ],
+   "lon": 38.27,
+   "lat": 36.93
+  },
+  {
+   "type": "shot",
+   "f": 0.55,
+   "n": 10,
+   "gap": 0.1,
+   "who": "d1"
+  },
+  {
+   "type": "jet",
+   "f": 0.6,
+   "dur": 5,
+   "vol": 0.7
+  },
+  {
+   "type": "blast",
+   "f": 0.69,
+   "size": 1.3,
+   "stage": [
+    290,
+    500
+   ],
+   "lon": 38.35,
+   "lat": 36.84
+  },
+  {
+   "type": "shot",
+   "f": 0.8,
+   "n": 12,
+   "gap": 0.1,
+   "who": "y2"
+  }
+ ],
+ "russia": [
+  {
+   "type": "waves",
+   "f": 0,
+   "vol": 0.8
+  },
+  {
+   "type": "jet",
+   "f": 0.04,
+   "dur": 6
+  },
+  {
+   "type": "shell",
+   "f": 0.18,
+   "lead": 1.0,
+   "lon": 37.16,
+   "lat": 36.2
+  },
+  {
+   "type": "jet",
+   "f": 0.3,
+   "dur": 6
+  },
+  {
+   "type": "shell",
+   "f": 0.42,
+   "lead": 1.0,
+   "lon": 36.63,
+   "lat": 35.93
+  },
+  {
+   "type": "blast",
+   "f": 0.55,
+   "size": 1.2,
+   "lon": 36.75,
+   "lat": 35.13
+  },
+  {
+   "type": "jet",
+   "f": 0.6,
+   "dur": 6
+  },
+  {
+   "type": "shell",
+   "f": 0.72,
+   "lead": 1.0,
+   "lon": 37.04,
+   "lat": 36.12
+  }
+ ],
+ "aleppo": [
+  {
+   "type": "wind",
+   "f": 0,
+   "vol": 0.5
+  },
+  {
+   "type": "siren",
+   "f": 0.03,
+   "dur": 12,
+   "vol": 0.6
+  },
+  {
+   "type": "shell",
+   "f": 0.14,
+   "lead": 1.0,
+   "stage": [
+    170,
+    470
+   ],
+   "lon": 37.16,
+   "lat": 36.2
+  },
+  {
+   "type": "shell",
+   "f": 0.28,
+   "lead": 1.0,
+   "stage": [
+    270,
+    470
+   ],
+   "lon": 36.37,
+   "lat": 33.52
+  },
+  {
+   "type": "shot",
+   "f": 0.38,
+   "n": 12,
+   "gap": 0.1,
+   "dist": true,
+   "lon": 36.75,
+   "lat": 35.13
+  },
+  {
+   "type": "shell",
+   "f": 0.5,
+   "lead": 1.0,
+   "stage": [
+    70,
+    470
+   ],
+   "lon": 37.06,
+   "lat": 36.3
+  },
+  {
+   "type": "blast",
+   "f": 0.64,
+   "size": 1.2,
+   "stage": [
+    365,
+    470
+   ],
+   "lon": 36.72,
+   "lat": 34.73
+  },
+  {
+   "type": "shell",
+   "f": 0.8,
+   "lead": 1.0,
+   "lon": 36.1,
+   "lat": 32.62
+  }
+ ],
+ "freeze": [
+  {
+   "type": "drone",
+   "f": 0,
+   "vol": 0.4
+  },
+  {
+   "type": "birds",
+   "f": 0.08,
+   "dur": 8,
+   "vol": 0.5
+  },
+  {
+   "type": "rumble",
+   "f": 0.5,
+   "dur": 9
+  }
+ ],
+ "toll": [
+  {
+   "type": "drone",
+   "f": 0,
+   "vol": 0.5
+  },
+  {
+   "type": "wind",
+   "f": 0,
+   "vol": 0.5
+  }
+ ],
+ "offensive": [
+  {
+   "type": "murmur",
+   "f": 0,
+   "vol": 0.5
+  },
+  {
+   "type": "shot",
+   "f": 0.1,
+   "n": 12,
+   "gap": 0.1,
+   "dist": true,
+   "lon": 37.16,
+   "lat": 36.2
+  },
+  {
+   "type": "cheer",
+   "f": 0.22,
+   "dur": 3,
+   "vol": 0.5
+  },
+  {
+   "type": "shot",
+   "f": 0.35,
+   "n": 10,
+   "gap": 0.1,
+   "dist": true,
+   "lon": 36.75,
+   "lat": 35.13
+  },
+  {
+   "type": "cheer",
+   "f": 0.47,
+   "dur": 3,
+   "vol": 0.5
+  },
+  {
+   "type": "shot",
+   "f": 0.6,
+   "n": 10,
+   "gap": 0.1,
+   "dist": true,
+   "lon": 36.72,
+   "lat": 34.73
+  },
+  {
+   "type": "cheer",
+   "f": 0.7,
+   "dur": 3,
+   "vol": 0.6
+  },
+  {
+   "type": "shot",
+   "f": 0.82,
+   "n": 10,
+   "gap": 0.1,
+   "dist": true,
+   "lon": 36.29,
+   "lat": 33.51
+  }
+ ],
+ "fall": [
+  {
+   "type": "cheer",
+   "f": 0.02,
+   "dur": 9,
+   "vol": 0.9
+  },
+  {
+   "type": "applause",
+   "f": 0.06,
+   "dur": 16,
+   "vol": 0.8
+  },
+  {
+   "type": "chant",
+   "f": 0.1,
+   "phrase": "free",
+   "reps": 4,
+   "period": 2.0,
+   "text": "سوريا حرة.. حرة"
+  },
+  {
+   "type": "firework",
+   "f": 0.3,
+   "x": 90,
+   "y": 250
+  },
+  {
+   "type": "firework",
+   "f": 0.42,
+   "x": 320,
+   "y": 240
+  },
+  {
+   "type": "chant",
+   "f": 0.38,
+   "phrase": "allahu",
+   "reps": 4,
+   "period": 1.6,
+   "text": "الله أكبر"
+  },
+  {
+   "type": "firework",
+   "f": 0.55,
+   "x": 200,
+   "y": 225
+  },
+  {
+   "type": "chant",
+   "f": 0.6,
+   "phrase": "freedom",
+   "reps": 3,
+   "period": 2.0,
+   "text": "حرية.. حرية.. حرية"
+  },
+  {
+   "type": "firework",
+   "f": 0.68,
+   "x": 60,
+   "y": 265
+  },
+  {
+   "type": "firework",
+   "f": 0.78,
+   "x": 350,
+   "y": 255
+  }
+ ],
+ "transition": [
+  {
+   "type": "murmur",
+   "f": 0,
+   "vol": 0.5
+  },
+  {
+   "type": "birds",
+   "f": 0.2,
+   "dur": 8,
+   "vol": 0.4
+  }
+ ],
+ "y2026": [
+  {
+   "type": "birds",
+   "f": 0,
+   "vol": 0.5
+  },
+  {
+   "type": "murmur",
+   "f": 0,
+   "vol": 0.4
+  }
+ ],
+ "outro": [
+  {
+   "type": "birds",
+   "f": 0,
+   "vol": 0.7
+  },
+  {
+   "type": "wind",
+   "f": 0,
+   "vol": 0.4
+  }
+ ]
+}

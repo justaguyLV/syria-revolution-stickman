@@ -6,6 +6,7 @@ from shapely.ops import unary_union
 
 from textutil import S, font, draw_text, text_w
 import relief as R
+import fx
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -277,6 +278,9 @@ def draw_map(img, box_px, view_d, era_prev, era_cur, zk, scene, lt, dur):
             d.ellipse([px - rr, py - rr, px + rr, py + rr], outline=(192, 57, 43), width=int(3 * S))
         dot(d, (px, py), r / S, (192, 57, 43) if m.get("big") else (60, 60, 70))
         pill_label(d, (px + 12 * S, py - 2 * S), m["name"], 17 if m.get("big") else 15, anchor="lm")
+
+    fx.map_fx(panel, v, scene, lt)          # blasts, smoke, gunfight sparks (sound-synced)
+    d = ImageDraw.Draw(panel)
 
     # legend
     used = []

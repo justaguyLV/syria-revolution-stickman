@@ -1,5 +1,5 @@
 pillow>=10.0
 shapely>=2.0
 edge-tts>=6.1
-cairosvg>=2.7
 numpy>=1.26
+scipy>=1.11

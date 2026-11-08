@@ -7,6 +7,8 @@ from textutil import S, font, draw_text, text_w, wrap
 import draw as D
 import mapview as M
 import footage as F
+import fx
+import sfx
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 W, H, FPS = 1280, 720, 24
@@ -16,6 +18,9 @@ RATE = os.environ.get("TTS_RATE", "-4%")
 TMP = os.path.join(ROOT, "build_tmp")
 
 SCENES = json.load(open(os.path.join(ROOT, "data", "scenes.json"), encoding="utf-8"))
+_SFX = json.load(open(os.path.join(ROOT, "data", "sfx.json"), encoding="utf-8"))
+for _sc in SCENES:
+    _sc["events"] = [dict(e) for e in _SFX.get(_sc["id"], [])]
 SUBS = []          # per scene: list of (start, end, text) relative to scene start
 
 
@@ -128,8 +133,17 @@ def render_frame(n):
     draw_text(d, (210 * S, 100 * S), sc["title"], font(24), D.INK, "mm")
     d.line([(70 * S, 128 * S), (350 * S, 128 * S)], fill=D.INK, width=int(2 * S))
 
-    # --- stage
-    D.STAGES[sc["stage"]](d, t, lt, sc["_dur"], sc)
+    # --- stage (own transparent canvas so it can shake + carry glows)
+    stage = Image.new("RGBA", (440 * S, 606 * S), (0, 0, 0, 0))
+    sd = ImageDraw.Draw(stage)
+    D.CANVAS = stage
+    D.STAGES[sc["stage"]](sd, t, lt, sc["_dur"], sc)
+    for e in fx.events(sc, "blast", "shell"):
+        if "stage" in e:
+            fx.fireball(stage, e["stage"][0] * S, e["stage"][1] * S, lt - e["t"], 30 * S * e.get("size", 1.0) ** 0.6, seed=int(e["t"] * 10))
+    sdx, sdy, flash = fx.shake(sc, lt)
+    img.paste(stage, (int(sdx * S), int(sdy * S)), stage)
+    d = ImageDraw.Draw(img)
 
     # --- subtitles
     d.rectangle([0, 606 * S, W * S, H * S], fill=(26, 26, 32))
@@ -144,6 +158,8 @@ def render_frame(n):
     # progress bar
     done = (t / TOTAL)
     d.rectangle([0, 600 * S, int(W * S * done), 606 * S], fill=D.RED)
+    if flash > 0.02:
+        img = Image.blend(img, Image.new("RGB", img.size, (255, 244, 220)), flash)
     return img.reduce(S).tobytes()
 
 
@@ -207,6 +223,10 @@ def main():
         STARTS.append(t); t += sc["_dur"]
         SUBS.append(split_subs(sc))
     TOTAL = t
+    for sc in SCENES:
+        for e in sc["events"]:
+            if "t" not in e:
+                e["t"] = round(e["f"] * sc["_dur"], 3)
     print(f"total {TOTAL:.1f}s = {TOTAL/60:.1f} min, frames {int(TOTAL*FPS)}")
 
     if a.preview:
@@ -219,9 +239,12 @@ def main():
         return
 
     music = make_music(TOTAL)
+    sfx_wav = sfx.render(SCENES, STARTS, TOTAL, TMP)
     mixed = os.path.join(TMP, "mix.m4a")
-    run(["ffmpeg", "-y", "-i", os.path.join(TMP, "voice.wav"), "-i", music, "-filter_complex",
-         "[0][1]amix=inputs=2:duration=first:normalize=0[a]", "-map", "[a]", "-c:a", "aac", "-b:a", "160k", mixed])
+    run(["ffmpeg", "-y", "-i", os.path.join(TMP, "voice.wav"), "-i", music, "-i", sfx_wav, "-filter_complex",
+         "[0]asplit=2[v1][v2];[2]volume=1.0[s0];[s0][v2]sidechaincompress=threshold=0.03:ratio=2.2:attack=15:release=350:makeup=1[sd];"
+         "[v1][1][sd]amix=inputs=3:duration=first:normalize=0,alimiter=limit=0.95[a]",
+         "-map", "[a]", "-c:a", "aac", "-b:a", "192k", mixed])
 
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     nfr = int(TOTAL * FPS)
