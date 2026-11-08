@@ -58,12 +58,26 @@ jobs:
           path: out/syria_revolution.mp4
           retention-days: 30
 
+      - name: Upload credits
+        uses: actions/upload-artifact@v4
+        with:
+          name: footage-credits
+          path: out/credits.json
+        continue-on-error: true
+
       - name: Publish GitHub Release
-        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="video-$(date +%Y%m%d-%H%M%S)"
-          gh release create "$TAG" out/syria_revolution.mp4 \
-            --title "الثورة السورية - فيديو ستيكمان ($TAG)" \
-            --notes "فيديو مولّد آليًا: تعليق صوتي + خرائط + رجل العصا. الخرائط توضيحية تقريبية."
+          python - <<'PY' > notes.md
+          import json, os
+          print("فيديو مولّد آليًا: تعليق صوتي + خرائط + رجل العصا (محرك stickman-mcp) + لقطات حقيقية مرخّصة من Wikimedia Commons.\n")
+          print("## مصادر اللقطات")
+          p = "out/credits.json"
+          if os.path.exists(p):
+              for c in json.load(open(p, encoding="utf-8")):
+                  print(f"- {c['caption']}: {c['artist']} ({c['license']}) {c['page']}")
+          PY
+          gh release create "$TAG" out/syria_revolution.mp4 out/credits.json \
+            --title "الثورة السورية - فيديو ستيكمان ($TAG)" --notes-file notes.md

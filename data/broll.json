@@ -1,0 +1,250 @@
+{
+ "intro": [
+  {
+   "sent": 0,
+   "title": "File:Damascus, Syria, Panoramic view of Damascus.jpg",
+   "kind": "photo",
+   "cap": "دمشق"
+  },
+  {
+   "sent": 1,
+   "title": "File:Hafez al-Assad official portrait.jpg",
+   "kind": "photo",
+   "cap": "حافظ الأسد"
+  },
+  {
+   "sent": 1,
+   "title": "File:Bashar al-Assad in 2001.jpg",
+   "kind": "photo",
+   "cap": "بشار الأسد"
+  }
+ ],
+ "spark": [
+  {
+   "sent": 0,
+   "title": "File:درعا البلد إحدى المظاهرات في بداية الإحتجاجات 2013-10-11 16-41.jpeg",
+   "kind": "photo",
+   "cap": "مظاهرة في درعا البلد"
+  },
+  {
+   "sent": 1,
+   "title": "File:Hama Yalla Erhal Ya Bashar 2011-7-2.ogv",
+   "kind": "video",
+   "cap": "مظاهرة في حماة 2011"
+  },
+  {
+   "sent": 2,
+   "title": "File:Anti-government protest in Assi square of Hama.ogv",
+   "kind": "video",
+   "cap": "ساحة العاصي في حماة"
+  },
+  {
+   "sent": 2,
+   "title": "File:Hundreds of thousands of demonstrators in Hama demanding the downfall of the regime.jpg",
+   "kind": "photo",
+   "cap": "مئات الآلاف يتظاهرون في حماة"
+  }
+ ],
+ "crackdown": [
+  {
+   "sent": 1,
+   "title": "File:الجيش السوري الحر Free Syrian Army.webm",
+   "kind": "video",
+   "cap": "الجيش السوري الحر"
+  },
+  {
+   "sent": 2,
+   "title": "File:Free Syrian Army soldier walking among rubble in Aleppo.jpg",
+   "kind": "photo",
+   "cap": "حلب 2012"
+  }
+ ],
+ "fragment": [
+  {
+   "sent": 1,
+   "title": "File:Syrians with opposition and Saudi Arabian flags on the abandoned tank of the Syrian Assad's forces after collapse of the regime.jpg",
+   "kind": "photo",
+   "cap": "أعلام المعارضة"
+  }
+ ],
+ "chemical": [
+  {
+   "sent": 0,
+   "title": "File:Rif Dimashq- People Of Eastern Ghouta Area Preparing For Eid Al-Fitr 22-6-2017.webm",
+   "kind": "video",
+   "cap": "الغوطة الشرقية"
+  },
+  {
+   "sent": 2,
+   "title": "File:Secretary Kerry Comments on Syria.ogv",
+   "kind": "video",
+   "cap": "تصريح وزير الخارجية الأمريكي"
+  }
+ ],
+ "isis": [
+  {
+   "sent": 1,
+   "title": "File:Coalition airstrike against ISIL near Kobane on VBIED.webm",
+   "kind": "video",
+   "cap": "غارة للتحالف قرب كوباني"
+  },
+  {
+   "sent": 1,
+   "title": "File:DVIDS - Video - Coalition Airstrike on a Daesh Mortar Position April 19 2015 near Kobani Syria.webm",
+   "kind": "video",
+   "cap": "غارات التحالف الدولي"
+  }
+ ],
+ "russia": [
+  {
+   "sent": 0,
+   "title": "File:Kalibr and Onyx cruise missiles engage terrorists' objects in Syria.webm",
+   "kind": "video",
+   "cap": "الحملة الروسية"
+  },
+  {
+   "sent": 0,
+   "title": "File:Russian Sukhoi Su-25 at Latakia (2).jpg",
+   "kind": "photo",
+   "cap": "قاعدة حميميم - اللاذقية"
+  },
+  {
+   "sent": 1,
+   "title": "File:VOA News in Russian 2012-12-21 - Syrian refugees are preparing for a difficult winter.ogv",
+   "kind": "video",
+   "cap": "لاجئون سوريون"
+  },
+  {
+   "sent": 1,
+   "title": "File:20151030 Syrians and Iraq refugees arrive at Skala Sykamias Lesvos Greece 2.jpg",
+   "kind": "photo",
+   "cap": "وصول لاجئين إلى أوروبا عبر البحر"
+  }
+ ],
+ "aleppo": [
+  {
+   "sent": 0,
+   "title": "File:Free Syrian Army soldier walking among rubble in Aleppo.jpg",
+   "kind": "photo",
+   "cap": "حلب"
+  },
+  {
+   "sent": 1,
+   "title": "File:Duma after the recapture by the Syrian Arab Army 18.jpg",
+   "kind": "photo",
+   "cap": "دوما 2018"
+  },
+  {
+   "sent": 2,
+   "title": "File:Raqqa destruction 2017.jpg",
+   "kind": "photo",
+   "cap": "الرقة 2017"
+  },
+  {
+   "sent": 2,
+   "title": "File:US airstrike in northern Raqqa countryside (December 2016).png",
+   "kind": "photo",
+   "cap": "ريف الرقة"
+  }
+ ],
+ "freeze": [
+  {
+   "sent": 1,
+   "title": "File:Pro-rebel demonstrations in northwestern Syria 2018-9-22.ogv",
+   "kind": "video",
+   "cap": "مظاهرات في الشمال الغربي"
+  },
+  {
+   "sent": 2,
+   "title": "File:Gaziantep'te Depremde 10 Katlı Bina Yıkıldı.webm",
+   "kind": "video",
+   "cap": "زلزال 2023"
+  },
+  {
+   "sent": 2,
+   "title": "File:İskenderun'da Deprem Nedeniyle Yıkım.webm",
+   "kind": "video",
+   "cap": "زلزال 2023"
+  }
+ ],
+ "toll": [
+  {
+   "sent": 2,
+   "title": "File:Syrian refugees in lebanon.jpg",
+   "kind": "photo",
+   "cap": "لاجئون سوريون في لبنان"
+  },
+  {
+   "sent": 2,
+   "title": "File:Tabqa refugees (2017).png",
+   "kind": "photo",
+   "cap": "نازحون في الطبقة"
+  },
+  {
+   "sent": 2,
+   "title": "File:Syrian families’ wait at Sednaya prison.png",
+   "kind": "photo",
+   "cap": "عائلات تنتظر أمام سجن صيدنايا"
+  }
+ ],
+ "fall": [
+  {
+   "sent": 0,
+   "title": "File:Syrian citizens celebrating fall of the Assad regime in Damascus at December 11 of 2024.jpg",
+   "kind": "photo",
+   "cap": "احتفال السوريين بسقوط النظام"
+  },
+  {
+   "sent": 0,
+   "title": "File:Syrians celebrate the fall of Assad at the Umayyad mosque, 14 December 2024.jpg",
+   "kind": "photo",
+   "cap": "ساحة الجامع الأموي"
+  },
+  {
+   "sent": 1,
+   "title": "File:Sednaya prison after the Fall of Assad.png",
+   "kind": "photo",
+   "cap": "سجن صيدنايا"
+  },
+  {
+   "sent": 1,
+   "title": "File:The archway that once read \"Assad Forever\" is now blacked out, Damascus, Syria, 2025.jpg",
+   "kind": "photo",
+   "cap": "قوس كان يحمل اسم الأسد"
+  }
+ ],
+ "transition": [
+  {
+   "sent": 0,
+   "title": "File:Ahmed al-Sharaa in November 2025.jpg",
+   "kind": "photo",
+   "cap": "أحمد الشرع"
+  },
+  {
+   "sent": 1,
+   "title": "File:Signing of the treaty for SDF integration.webm",
+   "kind": "video",
+   "cap": "توقيع اتفاق دمج قسد"
+  },
+  {
+   "sent": 3,
+   "title": "File:President Costa meets Interim President of Syria.webm",
+   "kind": "video",
+   "cap": "لقاء أوروبي مع الرئيس الانتقالي"
+  }
+ ],
+ "outro": [
+  {
+   "sent": 0,
+   "title": "File:Umayyad Square, Damascus.jpg",
+   "kind": "photo",
+   "cap": "ساحة الأمويين - دمشق"
+  },
+  {
+   "sent": 0,
+   "title": "File:Damascus Square to west of Umayyad Mosque 5062.jpg",
+   "kind": "photo",
+   "cap": "دمشق"
+  }
+ ]
+}

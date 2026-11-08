@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from textutil import S, font, draw_text, text_w, wrap
 import draw as D
 import mapview as M
+import footage as F
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 W, H, FPS = 1280, 720, 24
@@ -146,6 +147,52 @@ def render_frame(n):
     return img.reduce(S).tobytes()
 
 
+
+def sent_spans(sc):
+    sents = [x.strip() for x in re.split(r"(?<=[.؟!])\s+", sc["narration"]) if x.strip()]
+    total = sum(len(x) for x in sents); t = LEAD; out = []
+    for x in sents:
+        dd = sc["_nar"] * len(x) / total
+        out.append((t, t + dd)); t += dd
+    return out
+
+
+def plan_broll():
+    """-> list of (abs_start, dur, item) for every real-footage cut-away that could be fetched."""
+    path = os.path.join(ROOT, "data", "broll.json")
+    if not os.path.exists(path) or os.environ.get("NO_BROLL") == "1":
+        return []
+    data = json.load(open(path, encoding="utf-8")); plan = []
+    for i, sc in enumerate(SCENES):
+        spans = sent_spans(sc)
+        groups = {}
+        for it in data.get(sc["id"], []):
+            groups.setdefault(min(it["sent"], len(spans) - 1), []).append(it)
+        for k, items in groups.items():
+            ok = [it for it in items if F.fetch(it)]
+            if not ok: continue
+            a, b = spans[k]; a += 0.25
+            span = max(b - a, 2.6 * len(ok)); per = span / len(ok)
+            for j, it in enumerate(ok):
+                plan.append((STARTS[i] + a + j * per, min(per, 7.0), it))
+    return plan
+
+
+def compose(base, plan, out):
+    """Overlay the real-footage cut-aways on the animated base video."""
+    os.makedirs(os.path.join(TMP, "clips_b"), exist_ok=True)
+    cmd = ["ffmpeg", "-y", "-i", base]; chains = []; last = "0:v"
+    for n, (t0, dur, it) in enumerate(plan):
+        clip = os.path.join(TMP, "clips_b", f"b{n:03d}.mp4")
+        F.make_clip(it, dur, clip, seed=n)
+        cmd += ["-i", clip]
+        chains.append(f"[{n + 1}:v]setpts=PTS-STARTPTS+{t0:.3f}/TB[c{n}];[{last}][c{n}]overlay=0:0:eof_action=pass:enable='between(t,{t0:.3f},{t0 + dur:.3f})'[o{n}]")
+        last = f"o{n}"
+    fc = os.path.join(TMP, "compose.txt"); open(fc, "w").write(";\n".join(chains))
+    run(cmd + ["-filter_complex_script", fc, "-map", f"[{last}]", "-map", "0:a", "-c:v", "libx264", "-preset", "medium", "-crf", "20",
+               "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart", out])
+
+
 TOTAL = 0.0
 
 def main():
@@ -187,6 +234,14 @@ def main():
             if k % 480 == 0:
                 print(f"frame {k}/{nfr}", flush=True)
     ff.stdin.close(); ff.wait()
+    plan = plan_broll()
+    if plan:
+        print(f"composing {len(plan)} real-footage cut-aways ...", flush=True)
+        final = a.out
+        shutil.move(a.out, os.path.join(TMP, "base.mp4"))
+        compose(os.path.join(TMP, "base.mp4"), plan, final)
+        credits = [{"caption": it.get("cap"), "title": it["title"], "artist": it.get("artist"), "license": it.get("license"), "page": it.get("page")} for _, _, it in plan]
+        json.dump(credits, open(os.path.join(os.path.dirname(a.out), "credits.json"), "w"), ensure_ascii=False, indent=1)
     print("done ->", a.out)
 
 
