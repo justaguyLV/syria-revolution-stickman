@@ -1,0 +1,47 @@
+name: Build Thumbnail Pro
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  pro:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deps
+        run: pip install pillow numpy
+      - name: Photos (Wikimedia Commons, gathered earlier)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p photos out
+          gh release download thumb-assets -p '00.jpg' -p '01.jpg' -p 'meta.json' -D photos --clobber
+      - name: Composite (layers, flag, light, type)
+        run: python src/thumb_pro.py photos out/base.png
+      - name: Finish with PhotoCraft (headless)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p pc && cd pc
+          gh release download -R storytold/photocraft --pattern '*linux-x86_64.tar.gz'
+          tar xzf *.tar.gz; CLI=$(realpath photocraft-*/bin/photocraft-cli); chmod +x $CLI; cd ..
+          $CLI commands | grep -i -E "vibrance|curves|smartSharpen|photoFilter|levels" | tee out/cmds.txt || true
+          cp out/base.png out/s0.png
+          step() { in=$1; out=$2; shift 2; if $CLI run "$in" "$@" --out "$out"; then echo "OK $out"; else echo "SKIP $out ($*)"; cp "$in" "$out"; fi; }
+          step out/s0.png out/s1.png --cmd layer.newAdjustmentLayer.curves --params '{"points":[[0,0],[48,38],[128,128],[210,224],[255,255]]}'
+          step out/s1.png out/s2.png --cmd layer.newAdjustmentLayer.vibrance --params '{"vibrance":35,"saturation":8}'
+          step out/s2.png out/final.png --cmd filter.sharpen.smartSharpen --params '{"amount":70}'
+          $CLI convert out/final.png out/thumbnail.jpg --quality 92 2>&1 || python -c "from PIL import Image; Image.open('out/final.png').convert('RGB').save('out/thumbnail.jpg',quality=92)"
+      - name: Credits file
+        run: |
+          python - <<'PY'
+          import json
+          m=json.load(open('photos/meta.json')); keep=[x for x in m if x['file'] in ('00.jpg','01.jpg')]
+          with open('out/credits.txt','w',encoding='utf-8') as f:
+              f.write('Photo credits (Wikimedia Commons):\n')
+              for x in keep: f.write(f"- {x['title'].replace('File:','')} | {x['artist']} | {x['license']} | {x['page']}\n")
+          PY
+      - name: Publish to release thumb-assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload thumb-assets out/base.png out/final.png out/thumbnail.jpg out/credits.txt out/cmds.txt --clobber
