@@ -5,6 +5,8 @@ from shapely.geometry import Polygon, box
 from shapely.ops import unary_union
 
 from textutil import S, font, draw_text, text_w
+import relief as R
+import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,6 +22,9 @@ for c in COUNTRIES:
     if c["name"] == "Syria":
         _syria_polys = [Polygon(r) for r in c["rings"]]
 SYRIA_GEOM = unary_union(_syria_polys).buffer(0)
+ADM1 = R.admin_geoms("ADM1"); ADM2 = R.admin_geoms("ADM2")
+if ADM1:
+    SYRIA_GEOM = unary_union(list(ADM1.values())).buffer(0.003).buffer(-0.003)
 
 LABELS = [  # (text, lon, lat, max_span)
     ("تركيا", 35.2, 38.6, 24), ("العراق", 43.4, 33.6, 14), ("الأردن", 37.3, 31.0, 12),
@@ -29,70 +34,80 @@ LABELS = [  # (text, lon, lat, max_span)
 B = box
 def U(*g): return unary_union(g)
 
-# approximate regions (lon_min, lat_min, lon_max, lat_max)
-west_core = B(35.5, 32.2, 38.4, 35.55)
-coast = B(35.5, 34.5, 36.4, 36.0)
-idlib = B(36.2, 35.45, 37.0, 36.1)
-idlib_small = B(36.0, 35.5, 36.85, 36.25)
-afrin = B(36.5, 36.3, 37.15, 36.85)
-rural_aleppo_w = B(36.8, 36.0, 37.4, 36.7)
-aleppo_area = B(37.0, 36.0, 37.4, 36.4)
-bab_jarablus = B(37.2, 36.4, 38.4, 37.1)
-kobani = B(38.0, 36.6, 38.9, 37.1)
-ne_corner = B(40.0, 36.0, 42.5, 37.5)
-tabqa_raqqa = B(38.4, 35.4, 39.6, 36.4)
-dez = B(39.6, 34.2, 41.5, 35.8)
-jazira = B(38.2, 34.0, 42.5, 37.5)
-east_all = B(38.4, 34.0, 42.5, 37.5)
-badiya_isis = B(37.5, 33.8, 41.5, 34.8)
-south_rebel = B(35.6, 32.3, 36.4, 33.0)
-ghouta = B(36.3, 33.4, 36.6, 33.65)
-suwayda = B(36.3, 32.4, 37.05, 33.1)
-tal_abyad = B(38.7, 36.5, 40.2, 36.95)
-hajin = B(40.4, 34.3, 41.3, 35.0)
+def Dz(*names):
+    """Union of real ADM2 districts (falls back to nothing if the geo data is missing)."""
+    missing = [n for n in names if n not in ADM2]
+    if ADM2 and missing:
+        raise KeyError(f"unknown districts: {missing}")
+    return U(*[ADM2[n] for n in names if n in ADM2]) if ADM2 else Polygon()
 
 def clip(g): return g.intersection(SYRIA_GEOM)
+
+# approximate sub-district cut lines (lon_min, lat_min, lon_max, lat_max)
+aleppo_city = B(37.04, 36.12, 37.24, 36.28)
+w_rural_aleppo = B(36.35, 35.95, 37.0, 36.5)
+idlib_east = B(36.75, 35.6, 37.6, 36.2)
+hajin = B(40.65, 34.3, 41.6, 35.0)
+# east of the Euphrates (Raqqa -> Deir ez-Zor -> Abu Kamal), the old SDF / regime dividing line
+east_euph = Polygon([(39.7, 36.3), (39.95, 35.75), (40.17, 35.33), (40.46, 35.0), (40.9, 34.45), (41.4, 34.1),
+                     (42.6, 34.2), (42.6, 37.6), (39.7, 37.6)])
+
+D = dict(
+    dam=("Damascus",), qatana=("Qatana",),
+    ghouta=("Rural Damascus", "Duma", "Darayya", "Az-Zabdani"), qalamoun=("Al Qutayfah", "An Nabk", "Yabroud", "At Tall"),
+    homs=("Homs", "Al-Qusayr", "Tall Kalakh"), rastan=("Ar-Rastan",), palmyra=("Tadmor", "Al Makhrim"),
+    hama=("Hama", "As-Suqaylabiyah", "As-Salamiyeh", "Masyaf", "Muhradah"),
+    coast=("Lattakia", "Jablah", "Al-Haffa", "Al-Qardaha", "Tartous", "Banyas", "Safita", "Dreikish", "Sheikh Badr"),
+    suwayda=("As-Sweida", "Salkhad", "Shahba"),
+    daraa=("Dar'a", "Izra'"), sanamayn=("As-Sanamayn",), quneitra=("Quneitra", "Al Fiq"),
+    idlib=("Idleb", "Harim", "Jisr-Ash-Shugur", "Ariha"), maara=("Al Ma'ra",),
+    jebel=("Jebel Saman",), safira=("As-Safira",),
+    azaz=("A'zaz",), albab=("Al Bab",), jarablus=("Jarablus",), menbij=("Menbij",),
+    afrin=("Afrin",), kobani=("Ain Al Arab",), tabqa=("Ath-Thawrah",), raqqa=("Ar-Raqqa",),
+    tellabiad=("Tell Abiad",), rasalain=("Ras Al Ain",),
+    hasakah=("Al-Hasakeh", "Quamishli", "Al-Malikeyyeh"), dez=("Deir-ez-Zor", "Al Mayadin", "Abu Kamal"),
+)
+def Z(*keys):
+    return U(*[Dz(*D[k]) for k in keys])
 
 def era_zones(era):
     z = {}
     if era == "2013":
-        opp = U(idlib, rural_aleppo_w, bab_jarablus, tabqa_raqqa, dez, south_rebel, ghouta)
-        sdf = U(afrin, kobani, ne_corner)
-        reg = U(west_core, coast, aleppo_area).difference(U(opp, sdf))
-        z = {"regime": reg, "opp": opp.difference(sdf), "sdf": sdf}
+        sdf = Z("afrin", "kobani", "hasakah", "rasalain")
+        opp = U(Z("ghouta", "idlib", "maara", "azaz", "albab", "jarablus", "menbij", "safira", "raqqa", "tabqa", "dez",
+                  "daraa", "quneitra", "rastan", "jebel"), Dz("Al Qutayfah", "An Nabk", "Yabroud")).difference(aleppo_city)
+        reg = SYRIA_GEOM.difference(U(sdf, opp))
+        z = {"regime": reg, "opp": opp, "sdf": sdf}
     elif era == "2015":
-        sdf = U(afrin, kobani, ne_corner)
-        isis = U(jazira, badiya_isis, bab_jarablus).difference(sdf)
-        opp = U(idlib, rural_aleppo_w, south_rebel, ghouta).difference(isis)
-        reg = U(west_core, coast, aleppo_area).difference(U(isis, opp, sdf))
+        sdf = Z("afrin", "kobani", "hasakah", "rasalain", "tellabiad")
+        isis = Z("raqqa", "tabqa", "dez", "palmyra", "albab", "jarablus", "menbij", "safira")
+        opp = U(Z("ghouta", "idlib", "maara", "azaz", "jebel", "daraa", "quneitra", "rastan")).difference(aleppo_city).difference(isis)
+        reg = SYRIA_GEOM.difference(U(sdf, isis, opp))
         z = {"regime": reg, "opp": opp, "sdf": sdf, "isis": isis}
     elif era == "2018":
-        tr = U(bab_jarablus, afrin)
-        sdf = east_all.difference(tr).difference(hajin)
-        opp = U(idlib, rural_aleppo_w).difference(tr)
-        isis = hajin
-        reg = SYRIA_GEOM.difference(U(tr, sdf, opp, isis))
-        z = {"regime": reg, "opp": opp, "sdf": sdf, "isis": isis, "tr": tr}
+        tr = Z("afrin", "azaz", "albab", "jarablus")
+        pocket = hajin.intersection(Z("dez")).intersection(east_euph)
+        sdf = U(Z("raqqa", "tabqa", "menbij", "kobani", "hasakah", "rasalain", "tellabiad"),
+                Z("dez").intersection(east_euph)).difference(pocket)
+        opp = U(Z("idlib", "maara"), Z("jebel").intersection(w_rural_aleppo))
+        reg = SYRIA_GEOM.difference(U(tr, sdf, opp, pocket))
+        z = {"regime": reg, "opp": opp, "sdf": sdf, "isis": pocket, "tr": tr}
     elif era == "2020":
-        tr = U(bab_jarablus, afrin, tal_abyad)
-        sdf = east_all.difference(tr)
-        opp = idlib_small.difference(tr)
+        tr = Z("afrin", "azaz", "albab", "jarablus", "tellabiad", "rasalain")
+        opp = U(Z("idlib", "maara")).difference(idlib_east).difference(Dz("Al Ma'ra"))
+        sdf = U(Z("raqqa", "tabqa", "menbij", "kobani", "hasakah"), Z("dez").intersection(east_euph))
         reg = SYRIA_GEOM.difference(U(tr, sdf, opp))
         z = {"regime": reg, "opp": opp, "sdf": sdf, "tr": tr}
     elif era == "dec2024":
-        sdf = east_all
+        sdf = U(Z("raqqa", "tabqa", "kobani", "hasakah"), Z("dez").intersection(east_euph))
         z = {"gov": SYRIA_GEOM.difference(sdf), "sdf": sdf}
     elif era == "2026":
-        sdf = U(ne_corner, kobani)
-        loc = suwayda
+        sdf = Z("hasakah", "kobani")
+        loc = Z("suwayda")
         z = {"gov": SYRIA_GEOM.difference(U(sdf, loc)), "sdf": sdf, "local": loc}
-    z = {k: clip(v) for k, v in z.items() if not v.is_empty}
-    if era in ("2013", "2015", "2018"):
-        rest = SYRIA_GEOM.difference(unary_union(list(z.values())))
-        rest = rest.buffer(-0.05).buffer(0.05)
-        if not rest.is_empty:
-            z["desert"] = rest
-    return z
+    # close hairline gaps between neighbouring districts of the simplified boundaries
+    z = {k: clip(v.buffer(0.004).buffer(-0.004)) for k, v in z.items()}
+    return {k: v for k, v in z.items() if not v.is_empty}
 
 ZONE_STYLE = {
     "regime": ((192, 57, 43), "النظام وحلفاؤه"),
@@ -119,6 +134,23 @@ def _rings(geom):
 def mercy(lat):
     return math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))
 
+_ring_cache = {}
+def _poly_pts(geom):
+    """[(exterior ndarray[lon, mercator-y], [holes...])] cached per geometry object."""
+    key = id(geom)
+    if key not in _ring_cache:
+        def arr(coords):
+            a = np.asarray(coords, dtype=np.float64)
+            return np.column_stack([a[:, 0], [mercy(la) for la in a[:, 1]]])
+        gs = [geom] if geom.geom_type == "Polygon" else [g for g in getattr(geom, "geoms", []) if g.geom_type == "Polygon"]
+        _ring_cache[key] = (geom, [(arr(g.exterior.coords), [arr(i.coords) for i in g.interiors]) for g in gs])
+    return _ring_cache[key][1]
+
+def _proj(v, a):
+    xs = v.w / 2 + (a[:, 0] - v.lon) * v.k
+    ys = v.h / 2 - (a[:, 1] - v.cy) * v.ky
+    return list(map(tuple, np.column_stack([xs, ys]).tolist()))
+
 class View:
     def __init__(self, lon, lat, span, w, h):
         self.lon, self.lat, self.span, self.w, self.h = lon, lat, span, w, h
@@ -142,7 +174,7 @@ def draw_map(img, box_px, view_d, era_prev, era_cur, zk, scene, lt, dur):
     d = ImageDraw.Draw(panel)
     v = View(view_d["lon"], view_d["lat"], view_d["span"], w, h)
 
-    for c in COUNTRIES:
+    for c in COUNTRIES:                          # flat fallback / outside the terrain extent
         is_sy = c["name"] == "Syria"
         for ring in c["rings"]:
             pts = [v.xy(lo, la) for lo, la in ring]
@@ -150,24 +182,44 @@ def draw_map(img, box_px, view_d, era_prev, era_cur, zk, scene, lt, dur):
             if max(xs) < -50 or min(xs) > w + 50 or max(ys) < -50 or min(ys) > h + 50:
                 continue
             d.polygon(pts, fill=SYRIA if is_sy else LAND, outline=LAND_LINE if not is_sy else (90, 80, 60))
-            if is_sy:
-                d.line(pts + [pts[0]], fill=(90, 80, 60), width=max(2, int(1.6 * S)))
+    has_relief = R.blit(panel, view_d, w, h)
+    d = ImageDraw.Draw(panel)
+    for c in COUNTRIES:                          # neighbour borders on top of the relief
+        if c["name"] == "Syria":
+            continue
+        for ring in c["rings"]:
+            pts = [v.xy(lo, la) for lo, la in ring]
+            xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
+            if max(xs) < -50 or min(xs) > w + 50 or max(ys) < -50 or min(ys) > h + 50:
+                continue
+            d.line(pts + [pts[0]], fill=(150, 138, 112), width=max(1, int(1.1 * S)))
 
-    # zones with crossfade
-    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    ld = ImageDraw.Draw(layer)
+    # control zones with crossfade: one mask per zone, blended straight onto the panel
     for era, weight in ((era_prev, 1 - zk), (era_cur, zk)):
         if era in (None, "none") or weight <= 0.01:
             continue
         for name, geom in zones(era).items():
             col = ZONE_STYLE[name][0]
-            for ring in _rings(geom):
-                pts = [v.xy(lo, la) for lo, la in ring]
-                tmp = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-                ImageDraw.Draw(tmp).polygon(pts, fill=col + (int(165 * weight),))
-                layer = Image.alpha_composite(layer, tmp)
-    panel = Image.alpha_composite(panel.convert("RGBA"), layer).convert("RGB")
+            m = Image.new("L", (w, h), 0); md = ImageDraw.Draw(m)
+            for ext, holes in _poly_pts(geom):
+                md.polygon(_proj(v, ext), fill=255)
+                for hole in holes:
+                    md.polygon(_proj(v, hole), fill=0)
+            m = m.point(lambda a, k=int(150 * weight): a * k // 255)
+            panel.paste(col, (0, 0), m)
+            edge = tuple(int(c * 0.55) for c in col)
+            ed = ImageDraw.Draw(panel)
+            for ext, _h in _poly_pts(geom):
+                ed.line(_proj(v, ext), fill=edge, width=max(1, int(1.4 * S * weight)))
     d = ImageDraw.Draw(panel)
+
+    # governorate lines (real ADM1) + Syria's outline
+    if ADM1 and view_d["span"] <= 13:
+        for g in ADM1.values():
+            for ext, _h in _poly_pts(g):
+                d.line(_proj(v, ext), fill=(250, 246, 236), width=max(1, int(0.9 * S)))
+    for ext, _h in _poly_pts(SYRIA_GEOM):
+        d.line(_proj(v, ext), fill=(70, 60, 45), width=max(2, int(1.8 * S)))
 
     # labels
     for text, lo, la, mx in LABELS:

@@ -48,6 +48,9 @@ jobs:
       - name: Check Arabic shaping is available
         run: python -c "from PIL import features; assert features.check('raqm'), 'raqm missing'; print('raqm OK')"
 
+      - name: Fetch real terrain (AWS Terrarium) + admin boundaries (geoBoundaries)
+        run: python tools/fetch_geo.py build_tmp/geo
+
       - name: Build video (TTS + map frames + mix)
         run: python src/build.py --out out/syria_revolution.mp4
 
