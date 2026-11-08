@@ -9,7 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deps
-        run: pip install pillow numpy
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y libraqm0 fonts-noto-core
+          pip install pillow numpy
       - name: Photos (Wikimedia Commons, gathered earlier)
         env:
           GH_TOKEN: ${{ github.token }}
