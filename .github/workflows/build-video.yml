@@ -1,0 +1,53 @@
+name: Build Syria Revolution Video
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["src/**", "data/**", "assets/**", ".github/workflows/build-video.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install ffmpeg + libraqm (Arabic text shaping)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libraqm0 libfribidi0 libharfbuzz0b
+
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+
+      - name: Check Arabic shaping is available
+        run: python -c "from PIL import features; assert features.check('raqm'), 'raqm missing'; print('raqm OK')"
+
+      - name: Build video (TTS + map frames + mix)
+        run: python src/build.py --out out/syria_revolution.mp4
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: syria-revolution-video
+          path: out/syria_revolution.mp4
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="video-$(date +%Y%m%d-%H%M%S)"
+          gh release create "$TAG" out/syria_revolution.mp4 \
+            --title "الثورة السورية - فيديو ستيكمان ($TAG)" \
+            --notes "فيديو مولّد آليًا: تعليق صوتي + خرائط + رجل العصا. الخرائط توضيحية تقريبية."
